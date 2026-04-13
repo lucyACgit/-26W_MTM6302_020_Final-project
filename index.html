@@ -1,175 +1,175 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    />
     <title>Tell Me What To Do</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <!-- ===== START PAGE ===== -->
     <div id="start-page" class="page active">
+      <main class="start-main">
+        <!-- Slot Machine Container -->
+        <div class="slot-machine">
+          <!-- Machine Header -->
+          <div class="machine-header">
+            <div class="machine-header-left">
+              <span class="header-icon">&#9776;</span>
+              <span class="header-title">tell me what to do today</span>
+            </div>
+            <div class="machine-header-dots">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+            </div>
+          </div>
 
-        <main class="start-main">
+          <!-- Slots Display -->
+          <div class="slots-display" id="slots-display">
+            <!-- Meme image from API -->
+            <img id="meme-img" class="slot-img" alt="meme" />
+            <!-- Loading spinner (shown while fetching) -->
+            <div id="meme-loading" class="img-overlay">
+              <div class="spinner-ring"></div>
+              <p class="overlay-text">loading meme...</p>
+            </div>
+            <!-- Spin animation overlay (shown when SPIN is clicked) -->
+            <div id="spin-overlay" class="img-overlay hidden">
+              <div id="slot-emoji" class="slot-spin-emoji">🎲</div>
+              <p id="slot-task-name" class="slot-spin-label">SPINNING...</p>
+            </div>
+          </div>
 
-            <!-- Slot Machine Container -->
-            <div class="slot-machine">
-
-                <!-- Machine Header -->
-                <div class="machine-header">
-                    <div class="machine-header-left">
-                        <span class="header-icon">&#9776;</span>
-                        <span class="header-title">tell me what to do today</span>
-                    </div>
-                    <div class="machine-header-dots">
-                        <span class="dot"></span>
-                        <span class="dot"></span>
-                        <span class="dot"></span>
-                    </div>
-                </div>
-
-                <!-- Slots Display -->
-                <div class="slots-display" id="slots-display">
-                    <!-- Meme image from API -->
-                    <img id="meme-img" class="slot-img" alt="meme" />
-                    <!-- Loading spinner (shown while fetching) -->
-                    <div id="meme-loading" class="img-overlay">
-                        <div class="spinner-ring"></div>
-                        <p class="overlay-text">loading meme...</p>
-                    </div>
-                    <!-- Spin animation overlay (shown when SPIN is clicked) -->
-                    <div id="spin-overlay" class="img-overlay hidden">
-                        <div id="slot-emoji" class="slot-spin-emoji">🎲</div>
-                        <p id="slot-task-name" class="slot-spin-label">SPINNING...</p>
-                    </div>
-                </div>
-
-                <!-- Controls -->
-                <div class="machine-controls">
-                    <!-- Token / Lives Area -->
-                    <div class="token-area">
-                        <div class="token-area-top">
-                            <div class="hearts-row" id="hearts-row"></div>
-                            <div class="token-count" id="token-count">0 / 6</div>
-                        </div>
-                        <div class="token-bar-track" id="token-bar-track"></div>
-                    </div>
-
-                    <!-- Spin Button -->
-                    <button class="spin-btn" id="spin-btn" onclick="spin()">SPIN!</button>
-                </div>
+          <!-- Controls -->
+          <div class="machine-controls">
+            <!-- Token / Lives Area -->
+            <div class="token-area">
+              <div class="token-area-top">
+                <div class="hearts-row" id="hearts-row"></div>
+              </div>
+              <div class="loading-bar-track">
+                <div class="loading-bar-fill" id="loading-bar-fill"></div>
+              </div>
             </div>
 
-            <!-- How To Play Card -->
-            <div class="how-to-play-card">
-                <div class="card-header">
-                    <span class="card-header-title">HOW TO PLAY</span>
-                    <span class="card-header-icon">?</span>
-                </div>
-                <div class="card-body">
-                    <p>1. Click <strong>Spin</strong> to get a random daily task.</p>
-                    <p>2. Review your mission on the result screen.</p>
-                    <p>3. Complete the task to earn <strong class="teal">Lucky tokens</strong>.</p>
-                </div>
-            </div>
+            <!-- Spin Button -->
+            <button class="spin-btn" id="spin-btn" onclick="spin()">
+              SPIN!
+            </button>
+          </div>
+        </div>
 
-        </main>
+        <!-- How To Play Card -->
+        <div class="how-to-play-card">
+          <div class="card-header">
+            <span class="card-header-title">HOW TO PLAY</span>
+            <span class="card-header-icon">?</span>
+          </div>
+          <div class="card-body">
+            <p>1. Click <strong>Spin</strong> to get a random daily task.</p>
+            <p>2. Review your mission on the result screen.</p>
+            <p>3. Re-spin anytime.</p>
+          </div>
+        </div>
+      </main>
 
-        <!-- Bottom Nav -->
-        <nav class="bottom-nav">
-            <div class="nav-link">
-                <span class="nav-icon">🎲</span>
-                <span class="nav-label">LUCKY TOKEN</span>
-            </div>
-        </nav>
-
+      <!-- Bottom Nav -->
+      <nav class="bottom-nav">
+        <div class="nav-link">
+          <span class="nav-icon">☺︎</span>
+          <!-- <span class="nav-label">LUCKY DAY</span> -->
+        </div>
+      </nav>
     </div>
-
 
     <!-- ===== RESULT PAGE ===== -->
     <div id="result-page" class="page">
+      <!-- Top App Bar -->
+      <header class="top-bar">
+        <div class="top-bar-left">
+          <button class="back-btn" onclick="goBack()">&#8592; BACK</button>
+        </div>
+        <div class="top-bar-right">
+          <span class="result-badge">RESULT</span>
+        </div>
+      </header>
 
-        <!-- Top App Bar -->
-        <header class="top-bar">
-            <div class="top-bar-left">
-                <button class="back-btn" onclick="goBack()">&#8592; BACK</button>
+      <!-- Scrollable content -->
+      <main class="result-main">
+        <!-- Result Window -->
+        <div class="result-window">
+          <!-- Title Bar -->
+          <div class="result-title-bar">
+            <div class="title-bar-left">
+              <span class="title-icon">&#9733;</span>
+              <span class="title-text">MISSION_ACQUIRED</span>
             </div>
-            <div class="top-bar-right">
-                <span class="result-badge">RESULT</span>
+            <div class="title-bar-right">
+              <span class="corner-btn light"></span>
+              <span class="corner-btn dark"></span>
             </div>
-        </header>
+          </div>
 
-        <!-- Scrollable content -->
-        <main class="result-main">
-
-            <!-- Result Window -->
-            <div class="result-window">
-
-                <!-- Title Bar -->
-                <div class="result-title-bar">
-                    <div class="title-bar-left">
-                        <span class="title-icon">&#9733;</span>
-                        <span class="title-text">MISSION_ACQUIRED</span>
-                    </div>
-                    <div class="title-bar-right">
-                        <span class="corner-btn light"></span>
-                        <span class="corner-btn dark"></span>
-                    </div>
-                </div>
-
-                <!-- Dot-pattern content area -->
-                <div class="result-content">
-
-                    <!-- Illustration: Unsplash image based on task keywords -->
-                    <div class="task-illustration">
-                        <img id="task-img" class="task-img" alt="" />
-                        <div id="task-img-loading" class="img-overlay">
-                            <div class="spinner-ring"></div>
-                            <p class="overlay-text">finding image...</p>
-                        </div>
-                    </div>
-
-                    <!-- Text -->
-                    <div class="text-area">
-                        <div class="task-label">TODAY'S TASK:</div>
-                        <h1 class="task-title" id="result-title">GO TO THE PARK</h1>
-                        <div class="task-description-box">
-                            <p class="task-description" id="result-description">
-                                Step away from the screen and spend some time outside.
-                            </p>
-                        </div>
-                        <div class="reaction-row">
-                            <button class="reaction-btn teal-text" onclick="acceptTask()">super!</button>
-                            <button class="reaction-btn orange-text" onclick="rejectTask()">naah..</button>
-                        </div>
-                    </div>
-                </div>
+          <!-- Dot-pattern content area -->
+          <div class="result-content">
+            <!-- Illustration: Unsplash image based on task keywords -->
+            <div class="task-illustration">
+              <img id="task-img" class="task-img" alt="" />
+              <div id="task-img-loading" class="img-overlay">
+                <div class="spinner-ring"></div>
+                <p class="overlay-text">finding image...</p>
+              </div>
             </div>
 
-            <!-- Re-spin Button -->
-            <div class="respin-area">
-                <button class="respin-btn" onclick="respin()">RE-SPIN</button>
+            <!-- Text -->
+            <div class="text-area">
+              <div class="task-label">TODAY'S TASK:</div>
+              <h1 class="task-title" id="result-title">GO TO THE PARK</h1>
+              <div class="task-description-box">
+                <p class="task-description" id="result-description">
+                  Step away from the screen and spend some time outside.
+                </p>
+              </div>
+              <div class="reaction-row">
+                <button class="reaction-btn teal-text" onclick="acceptTask()">
+                  super!
+                </button>
+                <button class="reaction-btn orange-text" onclick="rejectTask()">
+                  naah..
+                </button>
+              </div>
             </div>
+          </div>
+        </div>
 
-        </main>
+        <!-- Re-spin Button -->
+        <div class="respin-area">
+          <button class="respin-btn" onclick="respin()">RE-SPIN</button>
+        </div>
+      </main>
 
-        <!-- Bottom Nav -->
-        <nav class="bottom-nav">
-            <div class="nav-link">
-                <span class="nav-icon">🎲</span>
-                <span class="nav-label">LUCKY TOKEN</span>
-            </div>
-        </nav>
-
+      <!-- Bottom Nav -->
+      <nav class="bottom-nav">
+        <div class="nav-link">
+          <span class="nav-icon">㋡</span>
+          <span class="nav-label">LUCKY DAY</span>
+        </div>
+      </nav>
     </div>
 
     <!-- Toast Notification -->
     <div class="toast" id="toast"></div>
 
     <script src="script.js"></script>
-</body>
+  </body>
 </html>

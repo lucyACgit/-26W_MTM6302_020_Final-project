@@ -1,6 +1,4 @@
-// ============================================
-//   TASK DATA
-// ============================================
+//customized tasks
 
 const TASKS = [
   {
@@ -95,56 +93,38 @@ const TASKS = [
   },
 ];
 
-// ============================================
-//   API CONFIG
-// ============================================
-
-// Meme API — completely free, no key required
-// Docs: https://github.com/D3vd/Meme_Api
-// Default endpoint pulls from r/memes, r/dankmemes, r/me_irl
+// free Meme API
 const MEME_API_URL = "https://meme-api.com/gimme";
 
-// Unsplash API key (fill this in with your own Access Key)
+// Unsplash API key
 const UNSPLASH_ACCESS_KEY = "Ys5OvXhJ0RoureBMSHWQGsyuANfgeYzYh7MQZ1n0FlU";
 
-// Fallback source URL if API key is still empty
+// Fallback image
 const UNSPLASH_FALLBACK_BASE_URL = "https://source.unsplash.com/390x280/?";
 
 function buildUnsplashUrl(keywords) {
   const encoded = encodeURIComponent(keywords);
 
-  // Keep app working even before key is configured
-  if (!UNSPLASH_ACCESS_KEY) {
-    // sig parameter prevents the browser from caching the same image
-    return `${UNSPLASH_FALLBACK_BASE_URL}${encoded}&sig=${Date.now()}`;
-  }
-
   return `https://api.unsplash.com/photos/random?query=${encoded}&orientation=landscape&client_id=${encodeURIComponent(UNSPLASH_ACCESS_KEY)}`;
 }
 
-// ============================================
-//   APP STATE
-// ============================================
-
-const MAX_TOKENS = 6;
+//APP STATE
 
 let currentTask = null;
 let isSpinning = false;
 let toastTimeout = null;
+let spinStepInterval = null;
 
-let tokens = parseInt(localStorage.getItem("luckyTokens") || "0");
+const SPIN_STEPS = 8;
 
-// ============================================
-//   DOM REFERENCES
-// ============================================
+//DOM elements
 
 const startPage = document.getElementById("start-page");
 const resultPage = document.getElementById("result-page");
 const slotsDisplay = document.getElementById("slots-display");
 const spinBtn = document.getElementById("spin-btn");
 const heartsRow = document.getElementById("hearts-row");
-const tokenBarTrack = document.getElementById("token-bar-track");
-const tokenCount = document.getElementById("token-count");
+const loadingBarFill = document.getElementById("loading-bar-fill");
 const toast = document.getElementById("toast");
 
 // Slot display API elements
@@ -160,9 +140,55 @@ const taskImgLoading = document.getElementById("task-img-loading");
 const resultTitle = document.getElementById("result-title");
 const resultDesc = document.getElementById("result-description");
 
-// ============================================
+//loading animation (hearts + bar, spin-only visual). Interpolate between light pink #ffdad6 and red #e75f47
+function getStepColor(step) {
+  const t = (step - 1) / (SPIN_STEPS - 1);
+  const r = Math.round(255 + (231 - 255) * t);
+  const g = Math.round(218 + (95 - 218) * t);
+  const b = Math.round(214 + (71 - 214) * t);
+  return `rgb(${r},${g},${b})`;
+}
+
+function applyLoadingStep(step) {
+  // Hearts: first `step` are active, rest inactive
+  const hearts = heartsRow.querySelectorAll(".heart");
+  hearts.forEach((h, i) => {
+    h.classList.toggle("inactive", i >= step);
+  });
+  // Bar width + color
+  loadingBarFill.style.width = (step / SPIN_STEPS) * 100 + "%";
+  loadingBarFill.style.backgroundColor = getStepColor(step);
+}
+
+function initLoadingDisplay() {
+  // Render 8 hearts: 1 active, 7 inactive
+  heartsRow.innerHTML = "";
+  for (let i = 0; i < SPIN_STEPS; i++) {
+    const heart = document.createElement("span");
+    heart.className = "heart" + (i === 0 ? "" : " inactive");
+    heart.textContent = "♥";
+    heartsRow.appendChild(heart);
+  }
+  loadingBarFill.style.width = (1 / SPIN_STEPS) * 100 + "%";
+  loadingBarFill.style.backgroundColor = "#ffdad6";
+}
+
+function startSpinLoading() {
+  let step = 1;
+  clearInterval(spinStepInterval);
+  spinStepInterval = setInterval(() => {
+    step++;
+    applyLoadingStep(step);
+    if (step >= SPIN_STEPS) clearInterval(spinStepInterval);
+  }, 250);
+}
+
+function resetSpinLoading() {
+  clearInterval(spinStepInterval);
+  initLoadingDisplay();
+}
+
 //   MEME API  (Start page slot display)
-// ============================================
 
 async function fetchMeme() {
   // Show spinner, hide any old meme
@@ -211,9 +237,7 @@ async function fetchMeme() {
   }
 }
 
-// ============================================
-//   UNSPLASH API  (Result page illustration)
-// ============================================
+//UNSPLASH API
 
 async function fetchTaskImage(task) {
   taskImgLoading.classList.remove("hidden");
@@ -255,54 +279,7 @@ async function fetchTaskImage(task) {
   }
 }
 
-// ============================================
-//   TOKEN SYSTEM
-// ============================================
-
-function renderTokens() {
-  heartsRow.innerHTML = "";
-  for (let i = 0; i < MAX_TOKENS; i++) {
-    const heart = document.createElement("span");
-    heart.className = "heart" + (i < tokens ? "" : " empty");
-    heart.textContent = "♥";
-    heartsRow.appendChild(heart);
-  }
-
-  tokenBarTrack.innerHTML = "";
-  for (let i = 0; i < MAX_TOKENS; i++) {
-    const block = document.createElement("div");
-    block.className = "token-block" + (i < tokens ? " filled" : "");
-    tokenBarTrack.appendChild(block);
-  }
-
-  tokenCount.textContent = tokens + " / " + MAX_TOKENS;
-}
-
-function addToken() {
-  if (tokens < MAX_TOKENS) {
-    tokens++;
-    localStorage.setItem("luckyTokens", tokens);
-    renderTokens();
-
-    const hearts = heartsRow.querySelectorAll(".heart");
-    if (hearts[tokens - 1]) {
-      hearts[tokens - 1].classList.add("gained");
-      setTimeout(() => hearts[tokens - 1].classList.remove("gained"), 500);
-    }
-
-    showToast(
-      tokens === MAX_TOKENS
-        ? "✨ All tokens collected!"
-        : "🎉 Lucky token earned!",
-    );
-  } else {
-    showToast("✨ Already at max tokens!");
-  }
-}
-
-// ============================================
-//   SPIN ANIMATION
-// ============================================
+//SPIN ANIMATION
 
 function spin() {
   if (isSpinning) return;
@@ -317,6 +294,7 @@ function spin() {
   // Show the spin overlay on top of the meme image
   spinOverlay.classList.remove("hidden");
   slotsDisplay.classList.add("spinning");
+  startSpinLoading();
 
   function cycleOnce() {
     const t = TASKS[Math.floor(Math.random() * TASKS.length)];
@@ -352,9 +330,7 @@ function spin() {
   cycleOnce();
 }
 
-// ============================================
 //   PAGE NAVIGATION
-// ============================================
 
 function showResultPage() {
   resultTitle.textContent = currentTask.title.toUpperCase();
@@ -374,6 +350,7 @@ function showResultPage() {
 function goBack() {
   resultPage.classList.remove("active");
   startPage.classList.add("active");
+  resetSpinLoading();
 }
 
 function respin() {
@@ -381,23 +358,17 @@ function respin() {
   setTimeout(spin, 150);
 }
 
-// ============================================
 //   TASK REACTIONS
-// ============================================
 
 function acceptTask() {
-  addToken();
-  setTimeout(goBack, 1400);
+  goBack();
 }
 
 function rejectTask() {
   showToast("No worries — try a re-spin!");
 }
 
-// ============================================
 //   TOAST
-// ============================================
-
 function showToast(message) {
   toast.textContent = message;
   toast.classList.add("show");
@@ -406,13 +377,10 @@ function showToast(message) {
   toastTimeout = setTimeout(() => toast.classList.remove("show"), 2200);
 }
 
-// ============================================
 //   BOOT
-// ============================================
-
 function init() {
-  renderTokens();
-  fetchMeme(); // Load first meme on page load
+  initLoadingDisplay();
+  fetchMeme();
 }
 
 init();
